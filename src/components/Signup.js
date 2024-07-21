@@ -13,13 +13,14 @@ const Signup = () => {
   const handleSignup = async () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      await setDoc(doc(db, "users", user.uid), {
-        email: user.email,
-        uid: user.uid,
-      });
+      // const user = userCredential.user;
+      // await setDoc(doc(db, "users", user.uid), {
+      //   email: user.email,
+      //   uid: user.uid,
+      // });
       setError(""); // Clear error on successful signup
-      alert("Signup successful! Redirecting to your To-Do List...");
+      // alert("Signup successful! Redirecting to your To-Do List...");
+      if(userCredential?.user)
       navigate("/todolist", { replace: true });
     } catch (error) {
       setError(error.message);
