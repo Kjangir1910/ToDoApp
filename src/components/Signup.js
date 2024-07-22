@@ -10,6 +10,10 @@ const Signup = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const handleLogin = async () => {
+    navigate("/login", { replace: true });
+  }
+
   const handleSignup = async () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -42,7 +46,7 @@ const Signup = () => {
         />
         <div style={styles.buttonContainer}>
           <button style={styles.signupButton} onClick={handleSignup}>Sign Up</button>
-          <a href= "/login" style={styles.loginLink}>Login</a>
+          <a onClick={handleLogin} style={styles.loginLink}>Login</a>
         </div>
       </div>
     </div>
