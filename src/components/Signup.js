@@ -14,7 +14,7 @@ const Signup = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       setError(""); // Clear error on successful signup
-      if (userCredential?.user) navigate("/todolist", { replace: true });
+      if (userCredential?.user) navigate("todoapp-mid8.onrender.com/todolist", { replace: true });
     } catch (error) {
       setError(error.message);
     }
@@ -42,7 +42,7 @@ const Signup = () => {
         />
         <div style={styles.buttonContainer}>
           <button style={styles.signupButton} onClick={handleSignup}>Sign Up</button>
-          <a href= "/login" style={styles.loginLink}>Login</a>
+          <a href= "todoapp-mid8.onrender.com/login" style={styles.loginLink}>Login</a>
         </div>
       </div>
     </div>
