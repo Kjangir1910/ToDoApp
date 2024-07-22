@@ -1,7 +1,16 @@
-// src/components/TodoList.jsx
 import React, { useState, useEffect } from "react";
 import { db, auth } from "../firebase";
-import { collection, addDoc, deleteDoc, doc, query, where, onSnapshot, updateDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  onSnapshot,
+  updateDoc,
+  getDocs
+} from "firebase/firestore";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -32,14 +41,14 @@ const TodoList = () => {
   const fetchLists = (userId) => {
     const q = query(collection(db, "lists"), where("userId", "==", userId));
     onSnapshot(q, (querySnapshot) => {
-      setLists(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setLists(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
   };
 
   const fetchTasks = (userId) => {
     const q = query(collection(db, "tasks"), where("userId", "==", userId));
     onSnapshot(q, (querySnapshot) => {
-      setTasks(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setTasks(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
   };
 
@@ -64,7 +73,10 @@ const TodoList = () => {
     const newTask = newTasks[listId];
     if (newTask && newTask.title.trim()) {
       await addDoc(collection(db, "tasks"), { ...newTask, userId: user.uid, listId });
-      setNewTasks({ ...newTasks, [listId]: { title: "", description: "", dueDate: "", priority: "" } });
+      setNewTasks({
+        ...newTasks,
+        [listId]: { title: "", description: "", dueDate: "", priority: "" }
+      });
     }
   };
 
@@ -99,7 +111,7 @@ const TodoList = () => {
       return;
     }
 
-    const draggedTask = tasks.find(task => task.id === draggableId);
+    const draggedTask = tasks.find((task) => task.id === draggableId);
     let updatedTasks = tasks;
 
     const [sourceListId, sourcePriority] = source.droppableId.split("-");
@@ -112,9 +124,12 @@ const TodoList = () => {
     draggedTask.listId = destinationListId;
     draggedTask.priority = destinationPriority;
 
-    updatedTasks = tasks.map(task => task.id === draggableId ? draggedTask : task);
+    updatedTasks = tasks.map((task) => (task.id === draggableId ? draggedTask : task));
 
-    await updateDoc(doc(db, "tasks", draggableId), { listId: destinationListId, priority: destinationPriority });
+    await updateDoc(doc(db, "tasks", draggableId), {
+      listId: destinationListId,
+      priority: destinationPriority
+    });
 
     setTasks(updatedTasks);
   };
@@ -129,47 +144,56 @@ const TodoList = () => {
   };
 
   return (
-    <div className="flex w-full justify-center">
-      <div className="bg-zinc-800 rounded-lg">
-        <h2 className="text-2xl mb-4">To-Do Lists</h2>
+    <div style={styles.container}>
+      <div style={styles.mainContent}>
+        <h2 style={styles.heading}>To-Do Lists</h2>
         <input
-          className="my-4 text-zinc-900 mx-6 py-1 rounded-md px-2"
+          style={styles.input}
           type="text"
           value={newListName}
           onChange={(e) => setNewListName(e.target.value)}
           placeholder="New List Name"
         />
-        <button onClick={addList}>Add List</button>
-        <button className="translate-x-8 bg-red-900" onClick={logOut}>Logout</button>
+        <button style={styles.button} onClick={addList}>
+          Add List
+        </button>
+        <button style={styles.logoutButton} onClick={logOut}>
+          Logout
+        </button>
 
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="flex w-[200vh] flex-wrap">
-            {lists.map(list => (
-              <div key={list.id} className="bg-zinc-600 p-4 w-[95vh] rounded-lg m-2">
-                <h3 className="text-xl mb-2">{list.name}</h3>
-                <button onClick={() => deleteList(list.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete List</button>
+          <div style={styles.listsContainer}>
+            {lists.map((list) => (
+              <div key={list.id} style={styles.list}>
+                <h3 style={styles.listHeading}>{list.name}</h3>
+                <button
+                  onClick={() => deleteList(list.id)}
+                  style={styles.deleteButton}
+                >
+                  Delete List
+                </button>
                 <input
-                  className="my-4 mx-6 text-zinc-900 py-1 rounded-md px-2"
+                  style={styles.input}
                   type="text"
                   value={newTasks[list.id]?.title || ""}
                   onChange={(e) => handleNewTaskChange(list.id, "title", e.target.value)}
                   placeholder="Task Title"
                 />
                 <input
-                  className="my-2 mx-6 text-zinc-900 py-1 rounded-md px-2"
+                  style={styles.input}
                   type="text"
                   value={newTasks[list.id]?.description || ""}
                   onChange={(e) => handleNewTaskChange(list.id, "description", e.target.value)}
                   placeholder="Task Description"
                 />
                 <input
-                  className="my-2 mx-6 text-zinc-900 py-1 rounded-md px-2"
+                  style={styles.input}
                   type="date"
                   value={newTasks[list.id]?.dueDate || ""}
                   onChange={(e) => handleNewTaskChange(list.id, "dueDate", e.target.value)}
                 />
                 <select
-                  className="my-2 mx-6 text-zinc-900 py-1 rounded-md px-2"
+                  style={styles.select}
                   value={newTasks[list.id]?.priority || ""}
                   onChange={(e) => handleNewTaskChange(list.id, "priority", e.target.value)}
                 >
@@ -178,24 +202,46 @@ const TodoList = () => {
                   <option value="Medium">Medium</option>
                   <option value="High">High</option>
                 </select>
-                <button onClick={() => addTask(list.id)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Task</button>
-                <div className="flex w-[100vh]">
-                  {priorities.map(priority => (
-                    <Droppable key={`${list.id}-${priority}`} droppableId={`${list.id}-${priority}`}>
+                <button
+                  onClick={() => addTask(list.id)}
+                  style={styles.addButton}
+                >
+                  Add Task
+                </button>
+                <div style={styles.tasksContainer}>
+                  {priorities.map((priority) => (
+                    <Droppable
+                      key={`${list.id}-${priority}`}
+                      droppableId={`${list.id}-${priority}`}
+                    >
                       {(provided, snapshot) => (
                         <div
-                          className={`bg-gray-900 p-4 rounded-lg m-2 droppable ${snapshot.isDraggingOver ? "is-dragging-over" : ""}`}
+                          style={{
+                            ...styles.droppable,
+                            ...(snapshot.isDraggingOver && styles.isDraggingOver)
+                          }}
                           ref={provided.innerRef}
                           {...provided.droppableProps}
                         >
-                          <h3 className="text-xl mb-2">{priority} Priority</h3>
+                          <h3 style={styles.priorityHeading}>{priority} Priority</h3>
                           {tasks
-                            .filter(task => task.listId === list.id && task.priority === priority)
+                            .filter(
+                              (task) =>
+                                task.listId === list.id &&
+                                task.priority === priority
+                            )
                             .map((task, index) => (
-                              <Draggable key={task.id} draggableId={task.id} index={index}>
+                              <Draggable
+                                key={task.id}
+                                draggableId={task.id}
+                                index={index}
+                              >
                                 {(provided, snapshot) => (
                                   <div
-                                    className={`bg-gray-500 p-4 rounded-lg mt-2 draggable ${snapshot.isDragging ? "is-dragging" : ""}`}
+                                    style={{
+                                      ...styles.draggable,
+                                      ...(snapshot.isDragging && styles.isDragging)
+                                    }}
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
@@ -204,7 +250,12 @@ const TodoList = () => {
                                     <p>{task.description}</p>
                                     <p>Due: {task.dueDate}</p>
                                     <p>Priority: {task.priority}</p>
-                                    <button onClick={() => deleteTask(task.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete Task</button>
+                                    <button
+                                      onClick={() => deleteTask(task.id)}
+                                      style={styles.deleteButton}
+                                    >
+                                      Delete Task
+                                    </button>
                                   </div>
                                 )}
                               </Draggable>
@@ -222,6 +273,122 @@ const TodoList = () => {
       </div>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    padding: "20px",
+    backgroundColor: "#f5f5f5",
+    minHeight: "100vh",
+  },
+  mainContent: {
+    backgroundColor: "#1e1e1e",
+    borderRadius: "8px",
+    padding: "20px",
+    width: "100%",
+    maxWidth: "800px",
+  },
+  heading: {
+    color: "#fff",
+    marginBottom: "10px",
+  },
+  input: {
+    display: "block",
+    width: "calc(100% - 22px)",
+    margin: "5px auto",
+    padding: "10px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+  },
+  button: {
+    backgroundColor: "#4caf50",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    padding: "10px 20px",
+    margin: "10px 0",
+    cursor: "pointer",
+    fontSize: "16px",
+  },
+  logoutButton: {
+    backgroundColor: "#f44336",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    padding: "10px 20px",
+    cursor: "pointer",
+    fontSize: "16px",
+    marginLeft: "10px",
+  },
+  listsContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+  },
+  list: {
+    backgroundColor: "#2e2e2e",
+    borderRadius: "8px",
+    padding: "10px",
+  },
+  listHeading: {
+    color: "#fff",
+  },
+  deleteButton: {
+    backgroundColor: "#f44336",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    padding: "5px 10px",
+    cursor: "pointer",
+    fontSize: "14px",
+    marginLeft: "10px",
+  },
+  select: {
+    display: "block",
+    width: "100%",
+    padding: "10px",
+    margin: "5px 0",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+  },
+  addButton: {
+    backgroundColor: "#2196f3",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    padding: "10px 20px",
+    cursor: "pointer",
+    fontSize: "16px",
+  },
+  tasksContainer: {
+    marginTop: "20px",
+  },
+  droppable: {
+    backgroundColor: "#3e3e3e",
+    borderRadius: "8px",
+    padding: "10px",
+    margin: "10px 0",
+  },
+  isDraggingOver: {
+    backgroundColor: "#5e5e5e",
+  },
+  priorityHeading: {
+    color: "#fff",
+  },
+  draggable: {
+    backgroundColor: "#4e4e4e",
+    borderRadius: "4px",
+    padding: "10px",
+    margin: "10px 0",
+    color: "#fff",
+  },
+  isDragging: {
+    backgroundColor: "#6e6e6e",
+  },
 };
 
 export default TodoList;
