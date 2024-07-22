@@ -20,26 +20,71 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2 className="mt-10 text-xl">Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div style={styles.container}>
+      <h2 style={styles.heading}>Login</h2>
+      {error && <p style={styles.error}>{error}</p>}
       <input
-        className="my-4 text-zinc-900 mx-6 py-1 rounded-md px-2"
+        style={styles.input}
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
       />
       <input
-        className="my-4 text-zinc-900 mx-6 py-1 rounded-md px-2"
+        style={styles.input}
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
       />
-      <button className="mx-6" onClick={handleLogin}>Login</button>
+      <button style={styles.button} onClick={handleLogin}>Login</button>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    backgroundColor: '#f5f5f5',
+    padding: '20px',
+    boxSizing: 'border-box',
+  },
+  heading: {
+    fontSize: '24px',
+    marginBottom: '20px',
+    color: '#333',
+  },
+  error: {
+    color: 'red',
+    marginBottom: '10px',
+  },
+  input: {
+    width: '100%',
+    maxWidth: '400px',
+    padding: '10px',
+    margin: '10px 0',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    fontSize: '16px',
+    boxSizing: 'border-box',
+  },
+  button: {
+    width: '100%',
+    maxWidth: '400px',
+    padding: '10px',
+    margin: '10px 0',
+    backgroundColor: '#007BFF',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '16px',
+    boxSizing: 'border-box',
+  },
 };
 
 export default Login;
